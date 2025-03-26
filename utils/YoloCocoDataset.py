@@ -20,16 +20,22 @@ class YOLO_COCO_DATASET(Dataset):
         img, anns = self.coco_ds[idx]
         bboxes = tv_tensors.BoundingBoxes([x['bbox'] for x in anns], format='XYWH', canvas_size = (img.size[1], img.size[0]))
         labels = [x['category_id'] for x in anns]
-
+        label = torch.zeros(self.grid_dims[1], self.grid_dims[0], 2 * (5 + self.num_classes))
         # Apply Transformations
-        #print(bboxes)
+        if bboxes.numel() < 1:
+            #print("No Bounding Box Found")
+            img = self.transform(img)
+            return img, label
+
+        if (idx == 250):
+            print(bboxes)
+
         if self.transform is not None:
             img, bboxes = self.transform(img, bboxes)
        # print(bboxes)
 
         _, img_height, img_width = img.shape
         # Define yolo annotations
-        label = torch.zeros(self.grid_dims[1], self.grid_dims[0], 2 * (5 + self.num_classes))
         for bbox, class_code in zip(bboxes, labels):
 
 
