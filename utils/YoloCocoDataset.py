@@ -25,6 +25,7 @@ class YOLO_COCO_DATASET(Dataset):
         if bboxes.numel() < 1:
             #print("No Bounding Box Found")
             img = self.transform(img)
+            img = img.float() / 255.0
             return img, label
 
         if (idx == 250):
@@ -32,6 +33,7 @@ class YOLO_COCO_DATASET(Dataset):
 
         if self.transform is not None:
             img, bboxes = self.transform(img, bboxes)
+            img = img.float() / 255.0
        # print(bboxes)
 
         _, img_height, img_width = img.shape
