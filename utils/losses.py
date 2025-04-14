@@ -18,6 +18,14 @@ class YoloV1Loss(nn.Module):
                                           self.grid_size, 
                                           self.grid_size, 
                                           self.num_boxes * 5 + self.num_classes)
+        
+        iou_b1 = intersection_over_union(predictions[..., 0:4], target[..., 0:4])
+        iou_b2 = intersection_over_union(predictions[..., 5:9], target[..., 0:4])
+        ious = torch.cat([iou_b1.unsqueeze(0), iou_b2.unsqueeze(0)], dim = 0)
+        iou_maxes, bestbox = torch.max(ious, dim = 0)
+
+        class_loss = torch.sum(predictions[...,self.num_boxes * 5:] - target[...,6:], -1)       
+        
         loss = 0.0
         for i in range(self.grid_size):
             for j in range(self.grid_size):
@@ -26,8 +34,8 @@ class YoloV1Loss(nn.Module):
                     
                 else:
                     # Compute responsible bbox
-                    iou_b1 = intersection_over_union(# BBOXES GO HERE)
-                    iou_b2 = intersection_over_union(# BBOXES GO HERE)
+                    
+
                     bbox_loss = 0.0  # SSE(x,y,sqrt(w), sqrt(h))
                     bbox_loss = self.lambda_coord * bbox_loss
                 
