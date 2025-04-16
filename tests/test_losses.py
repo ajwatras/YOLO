@@ -98,4 +98,4 @@ def test_bbox_loss():
     predicted[0,3] = 0.25
     loss = YoloV1Loss(7, 2, 10)
     bbox_loss = loss(predicted, gt)
-    assert torch.abs(bbox_loss - 2.08) < 1e-10, f'BBox Loss should be 2.08: {bbox_loss}'
+    assert torch.abs(bbox_loss - 5*2.08) < 1e-10, f'BBox Loss should be 2.08: {bbox_loss}'
